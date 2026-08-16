@@ -10,6 +10,9 @@ interface AuthContextType {
   switchUser: (user: User) => void;
 }
 
+// Get API base URL from environment or default to current origin
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 const DEFAULT_USERS: User[] = [
   {
     id: 'usr-admin-01',
@@ -65,7 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [availableUsers, setAvailableUsers] = useState<User[]>(DEFAULT_USERS);
 
   useEffect(() => {
-    fetch('/api/auth/users')
+    const url = `${API_BASE_URL}/api/auth/users`;
+    fetch(url)
       .then(res => res.json())
       .then(data => {
         if (data.users && data.users.length > 0) {

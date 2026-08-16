@@ -17,6 +17,9 @@ import {
 } from '../types.js';
 import { useAuth } from './AuthContext.js';
 
+// Get API base URL from environment or default to current origin
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface ToastMessage {
   id: string;
   type: 'SUCCESS' | 'INFO' | 'WARNING' | 'ERROR';
@@ -117,16 +120,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         auditRes,
         graphRes
       ] = await Promise.all([
-        fetch('/api/documents', { headers }).then(r => r.json()),
-        fetch('/api/risks', { headers }).then(r => r.json()),
-        fetch('/api/conflicts', { headers }).then(r => r.json()),
-        fetch('/api/actions', { headers }).then(r => r.json()),
-        fetch('/api/deadlines', { headers }).then(r => r.json()),
-        fetch('/api/compliance', { headers }).then(r => r.json()),
-        fetch('/api/workflows', { headers }).then(r => r.json()),
-        fetch('/api/approvals', { headers }).then(r => r.json()),
-        fetch('/api/audit-logs', { headers }).then(r => r.json()),
-        fetch('/api/knowledge-graph', { headers }).then(r => r.json())
+        fetch(`${API_BASE_URL}/api/documents`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/risks`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/conflicts`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/actions`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/deadlines`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/compliance`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/workflows`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/approvals`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/audit-logs`, { headers }).then(r => r.json()),
+        fetch(`${API_BASE_URL}/api/knowledge-graph`, { headers }).then(r => r.json())
       ]);
 
       if (docsRes.documents) {
@@ -156,7 +159,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const toggleDemoData = async () => {
     try {
-      const res = await fetch('/api/demo/toggle', {
+      const res = await fetch(`${API_BASE_URL}/api/demo/toggle`, {
         method: 'POST',
         headers: authHeaders()
       });
@@ -175,7 +178,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearAllData = async () => {
     try {
-      await fetch('/api/demo/clear', {
+      await fetch(`${API_BASE_URL}/api/demo/clear`, {
         method: 'POST',
         headers: authHeaders()
       });
@@ -188,7 +191,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const uploadDocument = async (formData: FormData): Promise<DocumentRecord | null> => {
     try {
-      const res = await fetch('/api/documents/upload', {
+      const res = await fetch(`${API_BASE_URL}/api/documents/upload`, {
         method: 'POST',
         headers: {
           'x-user-id': currentUser?.id || 'usr-admin-01'
@@ -211,7 +214,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const processDocumentAI = async (docId: string): Promise<boolean> => {
     try {
-      const res = await fetch(`/api/documents/${docId}/process`, {
+      const res = await fetch(`${API_BASE_URL}/api/documents/${docId}/process`, {
         method: 'POST',
         headers: authHeaders()
       });
@@ -227,7 +230,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const archiveDocument = async (docId: string) => {
     try {
-      await fetch(`/api/documents/${docId}/archive`, {
+      await fetch(`${API_BASE_URL}/api/documents/${docId}/archive`, {
         method: 'PATCH',
         headers: authHeaders()
       });
@@ -240,7 +243,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deleteDocument = async (docId: string) => {
     try {
-      const res = await fetch(`/api/documents/${docId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/documents/${docId}`, {
         method: 'DELETE',
         headers: authHeaders()
       });
@@ -257,7 +260,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyRisk = async (riskId: string) => {
     try {
-      await fetch(`/api/risks/${riskId}/verify`, {
+      await fetch(`${API_BASE_URL}/api/risks/${riskId}/verify`, {
         method: 'PATCH',
         headers: authHeaders()
       });
@@ -270,7 +273,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resolveConflict = async (conflictId: string, status: string, notes: string) => {
     try {
-      await fetch(`/api/conflicts/${conflictId}/resolve`, {
+      await fetch(`${API_BASE_URL}/api/conflicts/${conflictId}/resolve`, {
         method: 'PATCH',
         headers: authHeaders(),
         body: JSON.stringify({ status, notes })
@@ -284,7 +287,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateAction = async (actionId: string, status?: string, assignedTo?: string) => {
     try {
-      await fetch(`/api/actions/${actionId}`, {
+      await fetch(`${API_BASE_URL}/api/actions/${actionId}`, {
         method: 'PATCH',
         headers: authHeaders(),
         body: JSON.stringify({ status, assignedTo })
@@ -298,7 +301,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const decideApproval = async (approvalId: string, decision: 'APPROVED' | 'REJECTED' | 'ESCALATED', note?: string) => {
     try {
-      await fetch(`/api/approvals/${approvalId}/decision`, {
+      await fetch(`${API_BASE_URL}/api/approvals/${approvalId}/decision`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ decision, note })
@@ -312,7 +315,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const runSemanticSearch = async (query: string, minScore?: number): Promise<SearchResultChunk[]> => {
     try {
-      const res = await fetch('/api/search/semantic', {
+      const res = await fetch(`${API_BASE_URL}/api/search/semantic`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ query, minScore: minScore || 0.15 })
@@ -325,7 +328,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const askCopilot = async (question: string): Promise<CopilotMessage> => {
-    const res = await fetch('/api/copilot/ask', {
+    const res = await fetch(`${API_BASE_URL}/api/copilot/ask`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ question })
@@ -342,7 +345,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     newVersionText: string,
     newVersionLabel: string
   ): Promise<ChangeImpactAnalysis> => {
-    const res = await fetch('/api/impact/simulate', {
+    const res = await fetch(`${API_BASE_URL}/api/impact/simulate`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ baseDocumentId: baseDocId, newVersionText, newVersionLabel })
@@ -358,7 +361,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyChangeImpact = async (impactId: string, status: string) => {
     try {
-      await fetch(`/api/impact/${impactId}/verify`, {
+      await fetch(`${API_BASE_URL}/api/impact/${impactId}/verify`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify({ status })
