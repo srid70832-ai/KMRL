@@ -1,0 +1,6 @@
+{
+  "name": "KMRL IntelliDocs",
+  "description": "Enterprise AI-powered Document Intelligence & Operational Automation platform with semantic search, change impact simulator, risk radar, and workflow orchestration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
