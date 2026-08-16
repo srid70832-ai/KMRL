@@ -1,0 +1,20 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "functions": {
+    "dist/server.cjs": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/.*",
+      "dest": "dist/server.cjs"
+    },
+    {
+      "src": "/.*",
+      "dest": "dist/index.html"
+    }
+  ]
+}
